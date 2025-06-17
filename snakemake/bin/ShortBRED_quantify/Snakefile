@@ -1,0 +1,108 @@
+def get_fastq_input(wildcards, read_type):
+    """Returns a valid FASTQ file path, or None if missing (to prevent Snakemake errors)."""
+    try:
+        read_file = config['samples'].loc[wildcards.sample, read_type]
+    except KeyError:
+        return None
+    if pd.notna(read_file) and isinstance(read_file, str) and read_file.strip():
+        return read_file
+    return None
+
+rule shortbred_fastq2fasta:
+    input:
+        reads1_fastq = lambda wildcards: get_fastq_input(wildcards, 'Read1'),
+        reads2_fastq = lambda wildcards: get_fastq_input(wildcards, 'Read2') or []
+    output:
+        reads1_fasta = config['tmp_dir'] + '{sample}_reads1.fasta',
+        reads2_fasta = config['tmp_dir'] + '{sample}_reads2.fasta'
+    params:
+        fastq_to_fasta = script_dir + 'fastq_to_fasta_optimized.py',        
+        tmp_dir = config['tmp_dir']
+    log:
+        log_dir + "SBq/fastq2fasta_{sample}_r1.log"
+    conda:
+        env_dir + 'primary_env.yaml'
+    threads: 
+        1
+    resources:
+        time = lambda wildcards, attempt: attempt * 59,
+        n = lambda wildcards, threads: threads,
+        mem_gb_pt = lambda wildcards, attempt: attempt ** 2 * 8
+    shell:
+        """
+        mkdir -p {params.tmp_dir}
+        rm -fr {log}
+
+        # Process Read1
+        python {params.fastq_to_fasta} {input.reads1_fastq} {output.reads1_fasta} 2>{log}
+
+        # Process Read2 only if it exists
+        if [ -n "{input.reads2_fastq}" ]; then
+            python {params.fastq_to_fasta} {input.reads2_fastq} {output.reads2_fasta} 2>>{log}
+        else
+            touch {output.reads2_fasta}
+        fi
+        """
+
+def get_reads_input(wildcards):
+    """Returns a list of valid input FASTA files, ensuring correct single-end and paired-end behavior."""
+    reads1 = config['tmp_dir'] + f"{wildcards.sample}_reads1.fasta"
+    reads2 = config['tmp_dir'] + f"{wildcards.sample}_reads2.fasta"
+    # Check if Read2 exists and is not empty
+    if os.path.exists(reads2) and os.stat(reads2).st_size > 0:
+        return [reads1, reads2]  # Return both files for paired-end
+    return [reads1]  # Always return a list, even for single-end reads
+
+rule shortbred_quantify:
+    input:
+        reads_fasta = lambda wildcards: get_reads_input(wildcards)        
+    output:
+        sbq_res = sbq_dir + "{sample}.txt"
+    params:
+        #shortbred = script_dir + 'shortbred-master/shortbred_quantify.py',
+        shortbred = script_dir + 'shortbred-master/shortbred_quantify_dmnd.py',                
+        markers = config['params']['shortbred_quantify']['markers'],
+        pctl = config['params']['shortbred_quantify']['pct_length'],
+        tmp_dir_per_sample = config['tmp_dir'] + '{sample}',
+        aligner = config['params']['shortbred_quantify']['aligner'],
+        usearch_path = config['params']['shortbred_quantify']['usearch_path']
+    log:
+        log_dir + "SBq/{sample}.log"
+    conda:
+        env_dir + 'primary_env.yaml'
+    threads: 
+        8
+    resources:
+        time = lambda wildcards, attempt: attempt ** 2 * 59,
+        n = lambda wildcards, threads: threads,
+        mem_gb_pt = lambda wildcards, attempt: attempt ** 3 * 4 + 12
+    shell:
+        """
+        mkdir -p {params.tmp_dir_per_sample}
+        mkdir -p {sbq_dir}
+
+        # if aligner=="usearch" then make a variable with path
+        usearch_extra_params=""
+        if [ "{params.aligner}" == "usearch" ]; then
+            usearch_extra_params="--usearch {params.usearch_path}"
+        fi
+
+        # Determine whether to use single-end or paired-end reads
+        num_files=$(echo "{input.reads_fasta}" | wc -w)
+
+        if [ "$num_files" -eq 2 ]; then
+            reads="{input.reads_fasta}"
+        else
+            reads="{input.reads_fasta[0]}" # Safe extraction of the only file
+        fi
+
+        {params.shortbred} \
+        --search_program {params.aligner} $usearch_extra_params\
+        --markers {params.markers} \
+        --wgs $reads \
+        --results {output} \
+        --tmp {params.tmp_dir_per_sample} \
+        --pctlength {params.pctl} \
+        --threads {threads} \
+        2>{log} 1>&2
+        """

@@ -1,0 +1,78 @@
+import os
+
+rule real_counts: #get_real_counts
+    input:
+        get_rc = sbq_dir + '{sample}.txt'
+    output:
+        res_rc = rc_dir + '{sample}.txt'
+    log:
+        stdout=log_dir + "{sample}_real_counts.log",
+        stderr=log_dir + "{sample}_real_counts.log"
+    conda:
+        env_dir + 'primary_env.yaml'        
+    resources:
+        mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
+        time = lambda wildcards, attempt: attempt * 59,
+        n = lambda wildcards, threads: threads
+    script:
+        script_dir + 'hits-to-real-counts.R'
+
+rule merge_real_counts:
+    input:
+        merge = expand(rc_dir + '{sample}.txt', sample = config['samples_unique'])
+    output:
+        res_merge = rc_dir + 'merged_realcounts.txt'
+    params:
+        merge_script = script_dir + 'merge_realcounts.R',
+    log:
+        stdout=log_dir + "merged_rc_out.log",
+        stderr=log_dir + "merged_rc_err.log"
+    conda:
+        env_dir + 'primary_env.yaml'
+    resources:
+        mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
+        time = lambda wildcards, attempt: attempt * 59,
+        n = lambda wildcards, threads: threads
+    shell:
+        """
+        rm -f {rc_dir}/merged*.txt
+        Rscript {params.merge_script} {input.merge} {output.res_merge}
+        """
+
+
+rule creating_filtr_psq:
+    input:
+        otu=rc_dir + 'merged_realcounts.txt',
+        tax=ref_dir + 'tax_funct_annotation_v3.tsv',
+        #metadata= data_dir + 'MTG_Metadata.txt'
+    output:
+        out=rc_dir + 'psq.RData'
+    log:
+        stdout=log_dir + "psq_out.log",
+        stderr=log_dir + "psq_err.log"
+    conda:
+        env_dir + 'secondary_env.yaml'
+    resources:
+        mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
+        time = lambda wildcards, attempt: attempt * 59,
+        n = lambda wildcards, threads: threads
+    script:
+        script_dir + 'psq.R'
+
+rule alpha_div:
+    input:
+        psq=rc_dir + 'psq.RData'
+    output:
+        table=div_dir + 'alpha_div.txt'
+    log:
+        stdout=log_dir + "alpha_div_out.log",
+        stderr=log_dir + "alpha_div_err.log"
+    conda:
+        env_dir + 'secondary_env.yaml'
+    resources:
+        mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
+        time = lambda wildcards, attempt: attempt * 59,
+        n = lambda wildcards, threads: threads
+    script:
+         script_dir + 'alpha_div.R'
+

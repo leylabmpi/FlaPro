@@ -1,0 +1,61 @@
+name: r_433_nb
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=4.3.3
+  - python=3.11
+  - r-irkernel
+  - r-vctrs
+  - r-textshape
+  - r-rcurl
+  - gmp
+  - r-devtools
+  - r-partitions
+  - r-data.table
+  - r-zcompositions
+  - r-readxl
+  - r-dplyr
+  - jupyter_client
+  - r-igraph
+  - jupyter_core
+  - r-mass
+  - r-tibble
+  - r-tidyr
+  - r-tidytable
+  - bioconductor-phyloseq
+  - mscorefonts
+  - font-ttf-dejavu-sans-mono
+  - font-ttf-inconsolata
+  - font-ttf-source-code-pro
+  - font-ttf-ubuntu
+  - fontconfig
+  - fonts-conda-ecosystem
+  - fonts-conda-forge
+  - freetype
+  - r-fontawesome
+  - r-systemfonts
+  - r-ggplot2
+  - r-ggpubr
+  - r-ggrepel
+  - r-pheatmap
+  - r-ggsci
+  - r-bestnormalize
+  - r-broom
+  - r-broom.mixed
+  - r-coda
+  - r-doparallel
+  - r-foreach
+  - r-furrr
+  - r-gridextra
+  - r-jsonlite
+  - r-lme4
+  - r-lmertest
+  - r-openxlsx  
+  - r-purrr
+  - r-readr
+  - r-testthat
+  - r-vegan
+  - r-venndiagram
+
+prefix: /ebio/abt3_projects/software/miniconda3/envs/r_433_nb

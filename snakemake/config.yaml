@@ -1,0 +1,41 @@
+
+######################## table with sample --> read_file information ######################
+
+# table with sample --> read_file information
+samples_file: datatest/input_MTG4_nano.txt
+
+###################### output location #####################################################
+
+# output location
+output_dir: out/test_ibd_MTG4_nano_test/
+
+
+
+# read file path
+## use "None" if full file path is included in the samples_file
+read_file_path: None
+
+#-- master control --#
+# high-level control of major pipeline steps
+run_pipeline_steps:  
+  alpha_div: True
+
+# temporary file directory (your username will be added automatically)
+tmp_dir: ./tmp/
+
+#-- snakemake pipeline --#
+pipeline:
+  snakemake_folder: ./
+#  script_folder: ./bin/scripts/
+  export_conda: True
+  name: LLHFP
+
+params:
+  #just_read1: True
+  shortbred_quantify:
+    aligner: diamond #usearch # 
+    usearch_path: bin/scripts/usearch/usearch11.0.667_i86linux32 # only used if aligner==usearch
+    markers: ref/curated_fla_markers_c4.fasta
+    pct_length: 0.3
+  merge_realcounts:
+    merge_script: snakemake/llhfp_demo/bin/scripts/merge_realcounts.R

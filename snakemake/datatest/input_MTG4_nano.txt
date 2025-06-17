@@ -1,0 +1,5 @@
+Sample	Read1	Read2
+SRR5935740	datatest/MTG4_nano/SRR5935740_nano_1.fastq.gz	datatest/MTG4_nano/SRR5935740_nano_2.fastq.gz
+SRR5935742	datatest/MTG4_nano/SRR5935742_nano_1.fastq.gz	datatest/MTG4_nano/SRR5935742_nano_2.fastq.gz
+SRR5935744	datatest/MTG4_nano/SRR5935744_nano_1.fastq.gz	datatest/MTG4_nano/SRR5935744_nano_2.fastq.gz
+SRR5935745	datatest/MTG4_nano/SRR5935745_nano_1.fastq.gz	datatest/MTG4_nano/SRR5935745_nano_2.fastq.gz

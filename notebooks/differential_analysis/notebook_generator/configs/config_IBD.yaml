@@ -1,0 +1,14 @@
+block_root: notebooks/differential_analysis/notebook_generator/blocks
+
+projects:
+  - name: IBD
+    blocks:      
+      - IBD/01_head.ipynb
+      - _shared/02_t_init_load_feat.ipynb
+      - IBD/03_load_meta_samples.ipynb
+      - IBD/04_preprocess_A.ipynb
+      - _shared/05_t_preprocess_B.ipynb
+      - IBD/06_non_microbiome.ipynb
+      - _shared/07_t_component_based.ipynb
+      - _shared/08_t_composition_based.ipynb
+      - IBD/09_per_subject.ipynb

@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::biopython 
+  - conda-forge::python=3.11
+  - conda-forge::pandas=2.2.2 
+  - conda-forge::r-dplyr
+  - bioconda::bioconductor-phyloseq
+  - conda-forge::r-base  

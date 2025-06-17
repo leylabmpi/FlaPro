@@ -1,0 +1,5 @@
+Sample	Read1	Read2
+SRR5962905	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5962905/R1_final.fq.gz	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5962905/R2_final.fq.gz
+SRR5950650	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5950650/R1_final.fq.gz	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5950650/R2_final.fq.gz
+SRR5950604	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5950604/R1_final.fq.gz	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5950604/R2_final.fq.gz
+SRR5935911	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5935911/R1_final.fq.gz	/ebio/abt3_projects2/human_fla_profiling/abogdanova/out/llmgqc/filtered_MGX/SRR5935911/R2_final.fq.gz

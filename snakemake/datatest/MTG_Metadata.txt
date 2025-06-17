@@ -1,0 +1,5 @@
+Participant_ID	SRR	data_type	Diagnosis	Sample_id	week_num
+M2061	SRR5935740	metagenomics	HC	M2061C2    21
+C3011	SRR5935748	metagenomics	UC	C3011C23    41
+P6010	SRR5935744	metagenomics	CD	P6010C15    27
+H4024	SRR5935745	metagenomics	HC	H4024C16    29

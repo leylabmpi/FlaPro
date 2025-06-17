@@ -1,0 +1,3 @@
+[submodule "snakemake/bin/ll_pipeline_utils"]
+	path = snakemake/bin/ll_pipeline_utils
+	url = https://github.com/leylabmpi/ll_pipeline_utils.git
