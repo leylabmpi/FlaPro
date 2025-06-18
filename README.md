@@ -2,9 +2,6 @@
 
 A workflow for quantifying bacterial flagellins in human gut microbiome sequencing data, annotating their human TLR5 interaction phenotypes and conducting statistical analysis and visualization.
 
-## Prerequisites
-TODO
-
 ## Installation
 ``````
 git clone https://github.com/leylabmpi/human-fla-profiling.git
