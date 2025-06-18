@@ -160,3 +160,5 @@ devtools::install_github("leylabmpi/LeyLabRMisc")
 
 Open the notebook in VS Code, select the R Jupyter kernel of the installed environment and run the notebook.
 Further information on how to generate your own notebooks easily synchronizable across multiple projects is provided in a [separate readme file](/notebooks/differential_analysis/notebook_generator/README.md).
+
+Note: while the main input files for the secondary analysis are generated during the primary analysis, you have to prepare the additional files with the number of reads per sample (sample coverage), for example, using the `scripts/count_reads.sh` script.
