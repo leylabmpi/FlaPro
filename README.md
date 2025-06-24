@@ -4,7 +4,7 @@ A workflow for quantifying bacterial flagellins in human gut microbiome sequenci
 
 ## Installation
 ``````
-git clone https://github.com/leylabmpi/human-fla-profiling.git
+git clone https://github.com/leylabmpi/FlaPro.git
 cd ./human-fla-profiling/snakemake/bin/
 git submodule add https://github.com/leylabmpi/ll_pipeline_utils.git
 git submodule update --remote --init --recursive
