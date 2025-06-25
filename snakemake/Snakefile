@@ -34,9 +34,29 @@ print(config['samples'], file=sys.stderr)
 config['samples_unique'] = config['samples'].Sample.unique().tolist()
 
 config['pipeline']['username'] = getpass.getuser()
-config['pipeline']['email'] = config['pipeline']['username'] + '@tuebingen.mpg.de'
-config['tmp_dir'] = os.path.join(config['tmp_dir'], config['pipeline']['username'])
-config['tmp_dir'] = os.path.join(config['tmp_dir'], 'LLHFP_' + str(os.stat('.').st_ino) + '/')
+
+# Get email setting from config
+user_email = config['pipeline'].get('email', "none")
+
+
+if not user_email or user_email.lower() in ['false', 'none', 'skip', '']:
+    config['pipeline']['email'] = "none" 
+else:
+    config['pipeline']['email'] = user_email
+
+
+# default tmp_dir if not provided
+base_tmp = config.get('tmp_dir', './tmp/')
+
+# pipeline-specific subfolder with unique ID to avoid collisions
+tmp_dir = os.path.join(base_tmp, 'FlaPro_' + str(os.stat('.').st_ino))
+config['tmp_dir'] = tmp_dir + '/'
+
+sys.stderr.write('\33[33mUsing temporary directory: {} \x1b[0m\n'.format(config['tmp_dir']))
+
+if not os.path.isdir(config['tmp_dir']):
+    os.makedirs(config['tmp_dir'])
+
 sys.stderr.write('\33[33mUsing temporary directory: {} \x1b[0m\n'.format(config['tmp_dir'])) # yellow
 
 if not os.path.isdir(config['tmp_dir']):

@@ -13,8 +13,8 @@ rule shortbred_fastq2fasta:
         reads1_fastq = lambda wildcards: get_fastq_input(wildcards, 'Read1'),
         reads2_fastq = lambda wildcards: get_fastq_input(wildcards, 'Read2') or []
     output:
-        reads1_fasta = config['tmp_dir'] + '{sample}_reads1.fasta',
-        reads2_fasta = config['tmp_dir'] + '{sample}_reads2.fasta'
+        reads1_fasta = temp(config['tmp_dir'] + '{sample}_reads1.fasta'),
+        reads2_fasta = temp(config['tmp_dir'] + '{sample}_reads2.fasta')
     params:
         fastq_to_fasta = script_dir + 'fastq_to_fasta_optimized.py',        
         tmp_dir = config['tmp_dir']

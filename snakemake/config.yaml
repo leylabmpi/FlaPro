@@ -7,7 +7,7 @@ samples_file: datatest/input_MTG4_nano.txt
 ###################### output location #####################################################
 
 # output location
-output_dir: out/test_ibd_MTG4_nano_test/
+output_dir: ./out/MTG4_nano
 
 
 
@@ -20,15 +20,17 @@ read_file_path: None
 run_pipeline_steps:  
   alpha_div: True
 
-# temporary file directory (your username will be added automatically)
-tmp_dir: ./tmp/
+# temporary file directory
+tmp_dir: ./tmp
 
 #-- snakemake pipeline --#
 pipeline:
   snakemake_folder: ./
 #  script_folder: ./bin/scripts/
   export_conda: True
-  name: LLHFP
+  name: FlaPro
+  email: "none"   # Use "none" or "skip" to disable email, or provide email address like "user@domain.com"
+                  # Note: Must be a string, not boolean, due to external module requirements
 
 params:
   #just_read1: True
