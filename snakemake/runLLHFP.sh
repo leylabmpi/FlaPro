@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/.bash_profile
+source ~/.bash_profile  # initialize conda/mamba based on your system (can be ~/.bashrc, ~/.profile, or just conda init)
 conda activate snakemake8
 
 
