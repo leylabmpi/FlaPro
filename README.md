@@ -5,7 +5,7 @@ A workflow for quantifying bacterial flagellins in human gut microbiome sequenci
 ## Installation
 ``````
 git clone https://github.com/leylabmpi/FlaPro.git
-cd ./human-fla-profiling/snakemake/bin/
+cd ./FlaPro/snakemake/bin/
 git submodule add https://github.com/leylabmpi/ll_pipeline_utils.git
 git submodule update --remote --init --recursive
 
@@ -16,12 +16,24 @@ conda env create -f snakemake8_min.yaml
 One have to download usearch if needed in the following directory:
 
 ```
-bin/scripts/usearch/usearch11.0.667_i86linux32
+cd bin/script
+mkdir usearch
+
+cd usearch
+
+wget ./ {usearch_download_link} (might be found here: https://www.drive5.com/usearch/download.html)
+
+gzip -d {usearch.gzip}
+
 ```
 
 An example of running FlaPro is provided as a bash script:
+
 ``````
 ./runLLHFP.sh
+
+#Important: user should modify the script in order to initialize conda correctly (see the instructions in the script)
+
 ``````
 
 ## Primary analysis
