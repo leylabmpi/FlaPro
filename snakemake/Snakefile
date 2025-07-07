@@ -7,17 +7,22 @@ import socket
 import getpass
 import numpy as np
 import pandas as pd
+import sys
 
 
 # setup
 configfile: 'config.yaml'
 
 ## pipeline utils
-snake_dir = config['pipeline']['snakemake_folder'] #good
-include: snake_dir + 'bin/ll_pipeline_utils/Snakefile' #good
+snake_dir = config['pipeline']['snakemake_folder'] 
+include: snake_dir + 'bin/ll_pipeline_utils/Snakefile' 
 #print("Including Snakefile from: " + snake_dir + 'bin/ll_pipeline_utils/Snakefile')
 
 config_default(config, 'pipeline', 'name') 
+
+# env managing
+use_conda = config.get("use_conda", True)
+envs = config.get("envs", {})
 
 ## outdir
 config['output_dir'] = config['output_dir'].rstrip('/') + '/'

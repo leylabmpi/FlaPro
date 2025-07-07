@@ -9,7 +9,30 @@ samples_file: datatest/input_MTG4_nano.txt
 # output location
 output_dir: ./out/MTG4_nano
 
+####################### environment settings ########################
 
+use_conda: true  # Set to false if running on a cluster with modules
+envs:
+  primary_env: "bin/envs/primary_env.yaml"  
+  secondary_env: "bin/envs/secondary_env.yaml"  
+
+
+####################### software requirements (for non-conda setups) #####################
+
+# Required software versions (install via modules if use_conda=false)
+software_requirements:
+  snakemake: "8"
+  python: "3.12"
+  snakemake_executor_plugin_cluster_generic: "1.0.9"
+  biopython: "latest"
+  pandas: "2.2.2"
+  r_dplyr: "latest"
+  r_tibble: "latest"
+  diamond: "latest"
+  r_readr: "latest"
+  r_purrr: "latest"
+  phyloseq: "latest"
+  r_base: "latest"
 
 # read file path
 ## use "None" if full file path is included in the samples_file
@@ -35,7 +58,7 @@ pipeline:
 params:
   #just_read1: True
   shortbred_quantify:
-    aligner: diamond #usearch # 
+    aligner: diamond #usearch 
     usearch_path: bin/scripts/usearch/usearch11.0.667_i86linux32 # only used if aligner==usearch
     markers: ref/curated_fla_markers_c4.fasta
     pct_length: 0.3

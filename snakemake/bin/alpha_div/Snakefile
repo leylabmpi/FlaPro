@@ -9,7 +9,7 @@ rule real_counts: #get_real_counts
         stdout=log_dir + "{sample}_real_counts.log",
         stderr=log_dir + "{sample}_real_counts.log"
     conda:
-        env_dir + 'primary_env.yaml'        
+        env_dir + 'primary_env.yaml' if use_conda else None       
     resources:
         mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
         time = lambda wildcards, attempt: attempt * 59,
@@ -28,7 +28,7 @@ rule merge_real_counts:
         stdout=log_dir + "merged_rc_out.log",
         stderr=log_dir + "merged_rc_err.log"
     conda:
-        env_dir + 'primary_env.yaml'
+        env_dir + 'primary_env.yaml' if use_conda else None
     resources:
         mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
         time = lambda wildcards, attempt: attempt * 59,
@@ -51,7 +51,7 @@ rule creating_filtr_psq:
         stdout=log_dir + "psq_out.log",
         stderr=log_dir + "psq_err.log"
     conda:
-        env_dir + 'secondary_env.yaml'
+        env_dir + 'secondary_env.yaml' if use_conda else None
     resources:
         mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
         time = lambda wildcards, attempt: attempt * 59,
@@ -68,7 +68,7 @@ rule alpha_div:
         stdout=log_dir + "alpha_div_out.log",
         stderr=log_dir + "alpha_div_err.log"
     conda:
-        env_dir + 'secondary_env.yaml'
+        env_dir + 'secondary_env.yaml' if use_conda else None
     resources:
         mem_gb_pt = lambda wildcards, attempt: attempt ** 2 + 8,
         time = lambda wildcards, attempt: attempt * 59,

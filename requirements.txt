@@ -1,0 +1,12 @@
+- snakemake=8
+- python=3.12
+- snakemake-executor-plugin-cluster-generic==1.0.9
+- biopython 
+- pandas=2.2.2
+- r-dplyr
+- r-tibble
+- diamond
+- r-readr
+- r-purrr
+- phyloseq
+- r-base

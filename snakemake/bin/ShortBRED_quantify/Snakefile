@@ -21,7 +21,7 @@ rule shortbred_fastq2fasta:
     log:
         log_dir + "SBq/fastq2fasta_{sample}_r1.log"
     conda:
-        env_dir + 'primary_env.yaml'
+        env_dir + 'primary_env.yaml' if use_conda else None
     threads: 
         1
     resources:
@@ -69,7 +69,7 @@ rule shortbred_quantify:
     log:
         log_dir + "SBq/{sample}.log"
     conda:
-        env_dir + 'primary_env.yaml'
+        env_dir + 'primary_env.yaml' if use_conda else None
     threads: 
         8
     resources:
