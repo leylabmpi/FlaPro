@@ -21,7 +21,7 @@ If not, singularity image is provided and can be pulled:
 
 ```
 cd images
-singularity pull library:/aaaabogdanova/flapro/primary_env:latest
+singularity pull library://aaaabogdanova/flapro/primary_env:latest
 singularity pull library://aaaabogdanova/flapro/secondary_env:latest
 
 cd ../
