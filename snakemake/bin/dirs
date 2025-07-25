@@ -1,3 +1,5 @@
+import os
+
 env_dir = os.path.join(os.path.abspath(snake_dir), 'bin', 'envs/')
 log_dir = os.path.join(config['output_dir'], 'logs/')
 sbq_dir = os.path.join(config['output_dir'], 'ShortBRED_quantify/')
@@ -7,3 +9,15 @@ div_dir = os.path.join(config['output_dir'], 'diversity/')
 script_dir = os.path.join(os.path.abspath(snake_dir), 'bin', 'scripts/')
 data_dir = os.path.join(os.path.abspath(snake_dir), 'datatest/')
 ref_dir = os.path.join(os.path.abspath(snake_dir), 'ref/')
+
+# Apptainer configuration
+if config.get('execution', {}).get('mode') == 'apptainer':
+    primary_image = config['execution']['apptainer']['primary_image']
+    secondary_image = config['execution']['apptainer']['secondary_image']
+    bind_paths = config['execution']['apptainer'].get('bind_paths', [])
+    
+    # Ensure images exist
+    if not os.path.exists(primary_image):
+        raise FileNotFoundError(f"Primary container image not found: {primary_image}")
+    if not os.path.exists(secondary_image):
+        raise FileNotFoundError(f"Secondary container image not found: {secondary_image}")

@@ -8,10 +8,26 @@ git clone https://github.com/leylabmpi/FlaPro.git
 cd ./FlaPro/snakemake/bin/
 git submodule add https://github.com/leylabmpi/ll_pipeline_utils.git
 git submodule update --remote --init --recursive
+cd ../
+``````
+
+If conda is used, then:
+
+```
+conda env create -f snakemake8_min.yaml
+```
+
+If not, singularity image is provided and can be pulled:
+
+```
+mkdir images
+cd images
+singularity pull library:/aaaabogdanova/flapro/primary_env:latest
+singularity pull library://aaaabogdanova/flapro/secondary_env:latest
 
 cd ../
-conda env create -f snakemake8_min.yaml
-``````
+```
+
 
 One have to download usearch if needed in the following directory:
 
@@ -27,13 +43,16 @@ gzip -d {usearch.gzip}
 
 ```
 
-An example of running FlaPro is provided as a bash script:
+An example of running FlaPro is provided as a bash script in the snakemake pipeline directory:
 
 ``````
-./runLLHFP.sh
+#conda based
+./runLLHFP.sh #Important: user should modify the script in order to initialize conda correctly (see the instructions in the script)
 
-#Important: user should modify the script in order to initialize conda correctly (see the instructions in the script)
-
+#container based
+#first, load the snakemake module, if modular system is used or any other ways to enable snakemake
+#then,
+./runAppt.sh
 ``````
 
 ## Primary analysis

@@ -1,3 +1,5 @@
+import os
+
 def get_fastq_input(wildcards, read_type):
     """Returns a valid FASTQ file path, or None if missing (to prevent Snakemake errors)."""
     try:
@@ -20,8 +22,10 @@ rule shortbred_fastq2fasta:
         tmp_dir = config['tmp_dir']
     log:
         log_dir + "SBq/fastq2fasta_{sample}_r1.log"
+    container:
+        primary_image if config.get('execution', {}).get('mode') == 'apptainer' else None
     conda:
-        env_dir + 'primary_env.yaml'
+        env_dir + 'primary_env.yaml' if config.get('execution', {}).get('mode') != 'apptainer' else None
     threads: 
         1
     resources:
@@ -59,7 +63,6 @@ rule shortbred_quantify:
     output:
         sbq_res = sbq_dir + "{sample}.txt"
     params:
-        #shortbred = script_dir + 'shortbred-master/shortbred_quantify.py',
         shortbred = script_dir + 'shortbred-master/shortbred_quantify_dmnd.py',                
         markers = config['params']['shortbred_quantify']['markers'],
         pctl = config['params']['shortbred_quantify']['pct_length'],
@@ -68,8 +71,10 @@ rule shortbred_quantify:
         usearch_path = config['params']['shortbred_quantify']['usearch_path']
     log:
         log_dir + "SBq/{sample}.log"
+    container:
+        primary_image if config.get('execution', {}).get('mode') == 'apptainer' else None
     conda:
-        env_dir + 'primary_env.yaml'
+        env_dir + 'primary_env.yaml' if config.get('execution', {}).get('mode') != 'apptainer' else None
     threads: 
         8
     resources:
