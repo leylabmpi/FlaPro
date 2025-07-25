@@ -40,4 +40,4 @@ params:
     markers: ref/curated_fla_markers_c4.fasta
     pct_length: 0.3
   merge_realcounts:
-    merge_script: snakemake/llhfp_demo/bin/scripts/merge_realcounts.R
+    merge_script: snakemake/bin/scripts/merge_realcounts.R

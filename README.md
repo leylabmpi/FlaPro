@@ -20,6 +20,7 @@ conda env create -f snakemake8_min.yaml
 If not, singularity image is provided and can be pulled:
 
 ```
+mkdir images
 cd images
 singularity pull library://aaaabogdanova/flapro/primary_env:latest
 singularity pull library://aaaabogdanova/flapro/secondary_env:latest
@@ -77,6 +78,10 @@ The config.yaml file is organized into several main sections:
 - Parameters
 
 #### 2. Sample input configuration
+
+*config.yaml* - default configuration file. Edit this, if use conda-based environment
+*config_apptainer.yaml* - configuration file with enabled container. Edit this file, if conda is unavailable.
+
 ##### 2.1 Input data
 Specify the path to a sample file containing your metagenomic or meta-transcriptomic sample-to-read-file mappings:
 ```yaml
@@ -146,11 +151,11 @@ params:
 ##### 6.2 Results merging parameters
 ```yaml
   merge_realcounts:
-    merge_script: snakemake/llhfp_demo/bin/scripts/merge_realcounts.R
+    merge_script: snakemake/bin/scripts/merge_realcounts.R
 ```
 
 #### 7. Examples of configurations
-See `config_dmnd.yaml` (for DIAMOND), `config_usearch.yaml` (USEARCH) and `config.yaml`.
+See `config.yaml` and `config_apptainer.yaml`
 
 ### Output files
 Example:
