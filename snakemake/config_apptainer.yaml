@@ -23,8 +23,8 @@ execution:
   mode: apptainer
   apptainer:
     image_dir: ./images
-    primary_image: ./images/primary_env.sif
-    secondary_image: ./images/secondary_env.sif
+    primary_image: ./images/primary_env_latest.sif
+    secondary_image: ./images/secondary_env_latest.sif
     bind_paths:
       - "/tmp"
       - "${PWD}"
@@ -43,7 +43,7 @@ pipeline:
 
 params:
   shortbred_quantify:
-    aligner: diamond
+    aligner: diamond #or usearch
     usearch_path: bin/scripts/usearch/usearch11.0.667_i86linux32
     markers: ref/curated_fla_markers_c4.fasta
     pct_length: 0.3
