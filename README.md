@@ -20,7 +20,6 @@ conda env create -f snakemake8_min.yaml
 If not, singularity image is provided and can be pulled:
 
 ```
-mkdir images
 cd images
 singularity pull library:/aaaabogdanova/flapro/primary_env:latest
 singularity pull library://aaaabogdanova/flapro/secondary_env:latest
