@@ -4,7 +4,7 @@ snakemake -f \
     --use-singularity \
     --singularity-prefix ./tmp/ \
     --singularity-args "--bind $(pwd)" \
-    --configfile config_apptainer_fixed.yaml \
+    --configfile config_apptainer.yaml \
     --printshellcmds \
     --directory $(pwd) \
     --rerun-incomplete
