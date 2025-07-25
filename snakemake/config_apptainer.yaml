@@ -1,4 +1,3 @@
-
 ######################## table with sample --> read_file information ######################
 
 # table with sample --> read_file information
@@ -7,37 +6,46 @@ samples_file: datatest/input_MTG4_nano.txt
 ###################### output location #####################################################
 
 # output location
-output_dir: ./out/MTG4_nano
-
-
+output_dir: out/MTG4_nano_apptainer_full_test
 
 # read file path
-## use "None" if full file path is included in the samples_file
 read_file_path: None
 
 #-- master control --#
-# high-level control of major pipeline steps
 run_pipeline_steps:  
   alpha_div: True
 
 # temporary file directory
-tmp_dir: ./tmp
+tmp_dir: tmp
+
+#-- execution mode --#
+execution:
+  mode: apptainer
+  apptainer:
+    image_dir: ./images
+    primary_image: ./images/primary_env.sif
+    secondary_image: ./images/secondary_env.sif
+    bind_paths:
+      - "/tmp"
+      - "${PWD}"
+      - "${PWD}/datatest"
+      - "${PWD}/bin"
+      - "${PWD}/ref"
+      - "${PWD}/tmp"
+      - "${PWD}/out"
 
 #-- snakemake pipeline --#
 pipeline:
   snakemake_folder: ./
-#  script_folder: ./bin/scripts/
-  export_conda: True
+  export_conda: False
   name: FlaPro
-  email: "none"   # Use "none" or "skip" to disable email, or provide email address like "user@domain.com"
-                  # Note: Must be a string, not boolean, due to external module requirements
+  email: "none"
 
 params:
-  #just_read1: True
   shortbred_quantify:
-    aligner: diamond #usearch # 
-    usearch_path: bin/scripts/usearch/usearch11.0.667_i86linux32 # only used if aligner==usearch
+    aligner: diamond
+    usearch_path: bin/scripts/usearch/usearch11.0.667_i86linux32
     markers: ref/curated_fla_markers_c4.fasta
     pct_length: 0.3
   merge_realcounts:
-    merge_script: snakemake/bin/scripts/merge_realcounts.R
+    merge_script: bin/scripts/merge_realcounts.R
