@@ -269,13 +269,15 @@ split_train_test_distance_direct <- function(df, dist_matrix, split = 123, train
 
 filter_low_variance <- function(df, threshold) {
                 cat('* N of features initially:', ncol(df), '\n')
-                # Calculate variance as before
-                param_cols <- names(df)[!(names(df) %in% c("Exp.phenotype", "Cluster_CDHit", "sequence", 'pident_FlaB', 'length_FlaB', 'mismatch_FlaB', 'pident_FliC', 'length_FliC', 'mismatch_FliC', 'alntmscore_foldseek', 'rmsd_foldseek'))]
+                # Calculate variance on feature columns only (those starting with f_)
+                # This automatically adapts to the f_ prefix naming convention
+                param_cols <- grep('^f_', names(df), value = TRUE)
+
                 var_values <- sapply(df[param_cols], function(x) {
                 x_clean <- suppressWarnings(as.numeric(as.character(x)))
                 if(all(is.na(x_clean))) return(NA)
                 return(var(x_clean, na.rm = TRUE))
-                })    
+                })
 
                 var_df <- data.frame(
                 Parameter = names(var_values),
@@ -314,9 +316,9 @@ train_model_nestedcv <- function(train,
   # outcome variable is a factor
   train$Exp.phenotype <- as.factor(train$Exp.phenotype)
   
-  # x = features, y = response (last column is the phenotype)
+  # x = features, y = response (exclude the phenotype column)
   y <- train$Exp.phenotype
-  x <- train[, -ncol(train)]
+  x <- train[, names(train) != "Exp.phenotype"]
   
   # STEP 1: Create OUTER folds (for the outer loop)
   out_folds <- caret::createFolds(y, k = outer_folds_k)
@@ -718,4 +720,244 @@ plot_evaluation_results <- function(results, class_labels = c("Negative", "Posit
     # Return original results if no confusion matrix data
     return(list(metrics_plot = p1, accuracy_plot = p2, summary = summary_stats))
   }
+}
+
+
+# ============================================================================
+# ADDITIONAL VISUALIZATION FUNCTIONS
+# ============================================================================
+
+
+plot_prediction_distribution_pie <- function(df_predictions,
+                                             prediction_col = "pred_s1",
+                                             title = "Proportion of predicted silent and active flagellins") {
+  #### Create pie chart showing distribution of predictions ####
+  # df_predictions : dataframe with prediction column
+  # prediction_col : name of the prediction column (default = "pred_s1")
+  # title : plot title
+  #####################################################
+
+  library(ggplot2)
+
+  # Ensure the prediction column exists
+  if (!prediction_col %in% colnames(df_predictions)) {
+    stop(paste("Column", prediction_col, "not found in dataframe"))
+  }
+
+  # Create the plot
+  p <- df_predictions %>%
+    group_by(!!sym(prediction_col)) %>%
+    count() %>%
+    ggplot(aes(x = "", y = n, fill = !!sym(prediction_col))) +
+    geom_bar(stat = "identity", width = 1) +
+    coord_polar("y", start = 0) +
+    labs(fill = "Labels") +
+    ggtitle(title) +
+    theme_void() +
+    geom_text(aes(label = n), position = position_stack(vjust = 0.5))
+
+  return(p)
+}
+
+
+plot_binding_activity_scatter <- function(df_ba_plot,
+                                          df_base = NULL,
+                                          title_suffix = "",
+                                          legend_position = "right") {
+  #### Create binding vs activity scatter plot with prediction confidence ####
+  # df_ba_plot : dataframe with avg.activity, avg.binding, prob_gradient columns
+  # df_base : optional dataframe with experimental reference regions (xmin, xmax, ymin, ymax, status)
+  # title_suffix : optional suffix for plot title
+  # legend_position : position of legend (default = "right")
+  #####################################################
+
+  library(ggplot2)
+
+  # Create base plot
+  p <- ggplot(df_ba_plot, aes(avg.activity, avg.binding))
+
+  # Add reference regions if provided
+  if (!is.null(df_base)) {
+    p <- p +
+      geom_rect(aes(x=1, y=1, xmin = xmin, xmax = xmax,
+                    ymin = ymin, ymax=ymax, fill=status),
+                alpha=0.2, data=df_base) +
+      geom_hline(yintercept = 0.1144, alpha=0.3, size=0.5) +
+      geom_vline(xintercept = -2.066, alpha=0.3, size=0.5) +
+      geom_vline(xintercept = 0.220993633, alpha=0.3, size=0.5)
+  }
+
+  # Add main scatter points with gradient coloring
+  p <- p +
+    geom_point(aes(color=prob_gradient, size = 0.5), alpha=1) +
+    scale_color_gradient2(
+      name = "Classification\nconfidence score",
+      low = "#9b0a0a",
+      mid = "white",
+      high = "#1a7ec2",
+      midpoint = 0,
+      breaks = c(round(min(df_ba_plot$prob_gradient, na.rm = TRUE), 2),
+                 0,
+                 round(max(df_ba_plot$prob_gradient, na.rm = TRUE), 2)),
+      labels = c("Active (-0.5)", "0", "Silent (0.5)")
+    ) +
+    theme_bw(base_size = 18) +
+    guides(size = "none") +
+    theme(
+      legend.title = element_text(size = 12),
+      legend.text = element_text(size = 10)
+    ) +
+    labs(x = expression(Log[10]~TLR5~Activity),
+         y = expression(TLR5^N14~Binding~(a.u.)))
+
+  # Add fill scale for experimental phenotype if df_base is provided
+  if (!is.null(df_base)) {
+    p <- p + scale_fill_discrete('Experimental\nphenotype\n')
+  }
+
+  # Highlight points with probability gradient = 0 (uncertain predictions)
+  uncertain_points <- df_ba_plot %>% filter(prob_gradient == 0)
+  if (nrow(uncertain_points) > 0) {
+    p <- p + geom_point(data = uncertain_points,
+                       aes(avg.activity, avg.binding),
+                       color = "black", size = 3, shape = 1, stroke = 2)
+  }
+
+  # Set x-axis limits if df_base is provided
+  if (!is.null(df_base)) {
+    p <- p + scale_x_continuous(limits = c(-6, 0.220993633))
+  }
+
+  return(p)
+}
+
+
+plot_mixed_clusters_barplot <- function(mixed_clusters, bar_size = 1) {
+  #### Create horizontal bar chart of mixed clusters ####
+  # mixed_clusters : dataframe with Cluster_CDHit, pred_s1, n columns
+  # bar_size : size of bars (default = 1)
+  #####################################################
+
+  library(ggplot2)
+
+  p <- mixed_clusters %>%
+    ggplot(aes(x = reorder(Cluster_CDHit, n), y = n, fill = pred_s1)) +
+    geom_bar(stat = 'identity') +
+    scale_fill_manual(name = 'Predicted\nPhenotype',
+                      values = c("active" = "#7b08cd", "silent" = '#f18220')) +
+    theme_classic() +
+    coord_flip() +
+    theme(axis.text.x = element_text(hjust = 1, vjust = 1),
+          axis.text=element_text(size=rel(1)),
+          axis.title=element_text(size=rel(1)),
+          legend.text=element_text(size=rel(1)),
+          legend.title=element_text(size=rel(1))) +
+    labs(x='Flagellin Cluster', y='n')
+
+  return(p)
+}
+
+
+plot_cluster_confidence_stacked <- function(df_full, mixed_clusters, base_size = 15) {
+  #### Create stacked bar chart with confidence scores and prediction borders ####
+  # df_full : full dataframe with predictions and features
+  # mixed_clusters : dataframe with Cluster_CDHit column for filtering
+  # base_size : base font size for theme (default = 15)
+  #####################################################
+
+  library(ggplot2)
+  library(dplyr)
+
+  # Filter to mixed clusters and prepare data
+  # Keep only the columns we need for plotting
+  plot_data <- df_full %>%
+    select(Cluster_CDHit, pred_s1, prob_gradient) %>%
+    filter(Cluster_CDHit %in% mixed_clusters$Cluster_CDHit) %>%
+    rownames_to_column(var = "Flagellin_ID") %>%
+    group_by(Cluster_CDHit) %>%
+    mutate(n = n())
+
+  # Create the plot
+  p <- plot_data %>%
+    ggplot(aes(x = reorder(Cluster_CDHit, n), y = 1, fill = prob_gradient)) +
+    geom_bar(stat = 'identity',
+             position = "stack",
+             aes(color = pred_s1),
+             size = 1) +
+    scale_fill_gradient2(
+      name = "Classification confidence score",
+      low = '#7b08cd',
+      mid = "white",
+      high = '#f18220'
+    ) +
+    scale_color_manual(
+      name = "Predicted\nPhenotype",
+      values = c("active" = "#7b08cd", "silent" = '#f18220')
+    ) +
+    theme_classic() +
+    coord_flip() +
+    labs(
+      x = "Flagellin Cluster",
+      y = "Number of Flagellins"
+    ) +
+    theme(axis.text.x = element_text(hjust = 1, vjust = 1),
+          axis.text=element_text(size=rel(1)),
+          axis.title=element_text(size=rel(1)),
+          legend.text=element_text(size=rel(1)),
+          legend.title=element_text(size=rel(1)),
+          legend.position = "right"
+    )
+
+  return(p)
+}
+
+
+plot_robustness_comparison_metrics <- function(metrics_long,
+                                               comparisons = list(c("correct_labels", "shuffled_labels")),
+                                               base_size = 15) {
+  #### Create boxplot with statistical comparison for robustness testing ####
+  # metrics_long : long-format dataframe with Method, Metric, Value columns
+  # comparisons : list of method pairs to compare (default = correct vs shuffled labels)
+  # base_size : base font size for theme (default = 15)
+  #####################################################
+
+  library(ggplot2)
+  library(ggforce)
+  library(ggpubr)
+  library(dplyr)
+
+  # Calculate y-positions for significance labels
+  y_positions <- metrics_long %>%
+    group_by(Metric) %>%
+    summarize(y.position = max(Value, na.rm = TRUE) * 1.15)
+
+  metrics_long <- metrics_long %>%
+    left_join(y_positions, by = "Metric")
+
+  # Create the plot
+  p <- ggplot(metrics_long, aes(x = Method, y = Value, fill = Method)) +
+    geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+    geom_sina(alpha = 0.5, size = 0.8) +
+    facet_wrap(~Metric, scales = "free_y") +
+    stat_compare_means(
+      method = "t.test",
+      label = "p.signif",
+      comparisons = comparisons,
+      aes(label = ..p.signif.., y.position = y.position),
+      tip.length = 0.01
+    ) +
+    coord_cartesian(clip = "off") +
+    theme_minimal() +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      plot.margin = ggplot2::margin(10, 10, 10, 10),
+      strip.text = element_text(margin = ggplot2::margin(b = 8))
+    ) +
+    labs(
+      title = "Performance Metrics for correct and shuffled labels",
+      subtitle = "Significance from Welch's t-test per metric",
+      y = "Metric Value", x = "Method"
+    )
+
+  return(p)
 }
