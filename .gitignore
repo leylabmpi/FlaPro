@@ -1,0 +1,7 @@
+.snakemake/
+tmp/
+out/
+*.log
+screenlog.*
+flapro.err
+snakemake.log
