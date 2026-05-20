@@ -75,9 +75,8 @@ else:
 for index,row in config['samples'].iterrows():
     file_cols = ['Read1']
 
-    #if config['paired_end_reads'] == True:
-    #    file_cols.append('Read2')
-    file_cols.append('Read2')
+    if config['paired_end_reads'] == True:
+        file_cols.append('Read2')
 
     for f in file_cols:
         try:
@@ -103,7 +102,6 @@ else:
         config['samples']['Read2'] = config['read_file_path'] + config['samples']['Read2'].astype(str)
     else:
         config['samples']['Read2'] = ""
-    fi
 
 ## including modular snakefiles
 include: snake_dir + 'bin/dirs'
