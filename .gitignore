@@ -5,3 +5,4 @@ out/
 screenlog.*
 flapro.err
 snakemake.log
+images/
