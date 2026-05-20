@@ -6,3 +6,5 @@ screenlog.*
 flapro.err
 snakemake.log
 images/
+__pycache__/
+*.pyc
