@@ -1,12 +1,12 @@
 ######################## table with sample --> read_file information ######################
 
 # table with sample --> read_file information
-samples_file: datatest/input_MTG4_nano.txt
+samples_file: datatest/input_MTG4_nano_single-end.txt
 
 ###################### output location #####################################################
 
 # output location
-output_dir: out/MTG4_nano_apptainer_full_test
+output_dir: out/MTG4_nano_apptainer_no_singularity
 
 # read file path
 read_file_path: None
@@ -22,9 +22,9 @@ tmp_dir: tmp
 execution:
   mode: apptainer
   apptainer:
-    image_dir: ./images
-    primary_image: ./images/primary_env_latest.sif
-    secondary_image: ./images/secondary_env_latest.sif
+    image_dir: images
+    primary_image: images/primary_env_latest.sif
+    secondary_image: images/secondary_env_latest.sif
     bind_paths:
       - "/tmp"
       - "${PWD}"
@@ -43,7 +43,7 @@ pipeline:
 
 params:
   shortbred_quantify:
-    aligner: diamond #or usearch
+    aligner: diamond #usearch
     usearch_path: bin/scripts/usearch/usearch11.0.667_i86linux32
     markers: ref/curated_fla_markers_c4.fasta
     pct_length: 0.3
