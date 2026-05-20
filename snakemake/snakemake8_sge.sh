@@ -22,6 +22,7 @@ snakemake -f \
 	  --profile bin/ll_pipeline_utils/profiles/sge_sm8/ \
 	  --executor cluster-generic \
 	  --software-deployment-method conda \
+	  --conda-frontend conda \
 	  --configfile $CONFIG \
 	  --jobs $JOBS \
 	  --local-cores $JOBS \
