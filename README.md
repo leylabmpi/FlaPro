@@ -94,6 +94,20 @@ samples_file: datatest/input_MTG4_nano.txt
 - Relative or absolute path to the forward reads (R1)
 - Relative or absolute path to the reverse reads (R2), in case of paired-end sequencing
 
+**Paired-end example:**
+```
+Sample    Read1                          Read2
+sample1   /path/to/sample1_R1.fastq.gz   /path/to/sample1_R2.fastq.gz
+sample2   /path/to/sample2_R1.fastq.gz   /path/to/sample2_R2.fastq.gz
+```
+
+**Single-end example (omit the Read2 column entirely):**
+```
+Sample    Read1
+sample1   /path/to/sample1_R1.fastq.gz
+sample2   /path/to/sample2_R1.fastq.gz
+```
+
 ##### 2.2 Base path
 Define the root folder corresponding to the relative paths above:
 ```yaml
