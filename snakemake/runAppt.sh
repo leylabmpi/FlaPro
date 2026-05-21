@@ -1,4 +1,5 @@
-# Use the fixed config
+#!/bin/bash
+
 snakemake -f \
     --cores 5 \
     --use-apptainer \

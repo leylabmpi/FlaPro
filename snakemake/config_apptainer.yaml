@@ -1,12 +1,12 @@
 ######################## table with sample --> read_file information ######################
 
 # table with sample --> read_file information
-samples_file: datatest/input_MTG4_nano_single-end.txt
+samples_file: datatest/input_MTG4_nano.txt
 
 ###################### output location #####################################################
 
 # output location
-output_dir: out/MTG4_nano_apptainer_no_singularity
+output_dir: out/MTG4_nano_apptainer
 
 # read file path
 read_file_path: None
