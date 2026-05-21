@@ -21,6 +21,7 @@ WORKDIR=`pwd`
 snakemake -f \
 	  --cores $CORES \
 	  --use-conda \
+	  --conda-frontend conda \
 	  --configfile $CONFIG \
 	  --printshellcmds \
 	  --directory $WORKDIR \

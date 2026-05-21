@@ -131,9 +131,6 @@ pipeline:
 ```
 
 #### 6. Parameters
-```yaml
-#just_read1: True #used when there is only R1 reads
-``` 
 
 ##### 6.1 ShortBRED quantification parameters
 ```yaml

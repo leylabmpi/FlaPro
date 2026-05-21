@@ -13,9 +13,8 @@ import pandas as pd
 configfile: 'config.yaml'
 
 ## pipeline utils
-snake_dir = config['pipeline']['snakemake_folder'] #good
-include: snake_dir + 'bin/ll_pipeline_utils/Snakefile' #good
-#print("Including Snakefile from: " + snake_dir + 'bin/ll_pipeline_utils/Snakefile')
+snake_dir = config['pipeline']['snakemake_folder']
+include: snake_dir + 'bin/ll_pipeline_utils/Snakefile'
 
 config_default(config, 'pipeline', 'name') 
 
@@ -26,7 +25,7 @@ config['output_dir'] = config['output_dir'].rstrip('/') + '/'
 if not os.path.isfile(config['samples_file']):
     raise IOError('Cannot find file: {}'.format(config['samples_file']))
 config['samples'] = pd.read_csv(config['samples_file'], sep='\t', comment='#')
-config['samples']['Sample'].replace('[^a-zA-Z0-9_-]+', '_', regex=True, inplace=True)
+config['samples']['Sample'] = config['samples']['Sample'].replace('[^a-zA-Z0-9_-]+', '_', regex=True)
 config['samples'] = config['samples'].set_index(config['samples'].Sample)
 
 print(config['samples'], file=sys.stderr)
@@ -57,11 +56,6 @@ sys.stderr.write('\33[33mUsing temporary directory: {} \x1b[0m\n'.format(config[
 if not os.path.isdir(config['tmp_dir']):
     os.makedirs(config['tmp_dir'])
 
-sys.stderr.write('\33[33mUsing temporary directory: {} \x1b[0m\n'.format(config['tmp_dir'])) # yellow
-
-if not os.path.isdir(config['tmp_dir']):
-    os.makedirs(config['tmp_dir'])
-
 
 # Checking single paired reads
 if 'Read2' in config['samples'].columns and not config['samples']['Read2'].isnull().all():
@@ -75,16 +69,11 @@ else:
 for index,row in config['samples'].iterrows():
     file_cols = ['Read1']
 
-    #if config['paired_end_reads'] == True:
-    #    file_cols.append('Read2')
-    file_cols.append('Read2')
+    if config['paired_end_reads'] == True:
+        file_cols.append('Read2')
 
     for f in file_cols:
-        try:
-            #print("---", file=sys.stderr)
-            #print(str(row[f]), file=sys.stderr)
-            #print("---", file=sys.stderr)
-            #if not os.path.isfile(str(row[f])):            
+        try:        
             if pd.notna(row[f]) and not os.path.isfile(str(row[f])):
                 msg = 'Column={}, Sample={} ==> Cannot find file: {}'
                 raise ValueError(msg.format(f, row['Sample'], row[f]))
@@ -103,7 +92,6 @@ else:
         config['samples']['Read2'] = config['read_file_path'] + config['samples']['Read2'].astype(str)
     else:
         config['samples']['Read2'] = ""
-    fi
 
 ## including modular snakefiles
 include: snake_dir + 'bin/dirs'

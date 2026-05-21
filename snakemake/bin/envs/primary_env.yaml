@@ -2,12 +2,12 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python=3.11
-  - biopython 
-  - pandas=2.2.2
-  - r-dplyr
-  - r-tibble
-  - diamond
-  #- rapsearch
-  - r-readr
-  - r-purrr
+  - conda-forge::python=3.11.*
+  - conda-forge::r-base=4.5.*
+  - conda-forge::biopython=1.87.*
+  - conda-forge::pandas=2.2.*
+  - conda-forge::r-dplyr=1.2.*
+  - conda-forge::r-tibble=3.3.*
+  - conda-forge::r-readr=2.2.*
+  - conda-forge::r-purrr=1.2.*
+  - bioconda::diamond=2.2.*
