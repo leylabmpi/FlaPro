@@ -4,7 +4,7 @@ snakemake -f \
     --use-apptainer \
     --apptainer-prefix ./tmp/ \
     --apptainer-args "--bind $(pwd)" \
-    --configfile config_apptainer_orig.yaml \
+    --configfile config_apptainer.yaml \
     --printshellcmds \
     --directory $(pwd) \
     --rerun-incomplete
