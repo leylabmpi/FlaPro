@@ -17,7 +17,7 @@ If conda is used, then:
 conda env create -f snakemake8_min.yaml
 ```
 
-If not, singularity image is provided and can be pulled:
+If not, singularity image is provided and can be pulled with `singularity` or `apptainer` (ensure to have SylabsCloud if apptainer is used `apptainer remote add --no-login SylabsCloud cloud.sylabs.io`,  `apptainer remote use SylabsCloud`):
 
 ```
 mkdir images
