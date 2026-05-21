@@ -8,3 +8,4 @@ snakemake.log
 images/
 __pycache__/
 *.pyc
+*.0
