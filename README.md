@@ -181,6 +181,22 @@ Example:
               
               `alpha_div.txt` - calculated alpha diversity tables
 
+#### Interpreting the per-sample `real_counts/*.txt` files
+
+Each per-sample table has one row per flagellin family (marker cluster) with the following columns:
+
+| Column | Meaning |
+| --- | --- |
+| **Family** | Flagellin family / marker cluster ID. |
+| **Count** | **Normalized (RPKM) abundance** – reads per kilobase of reference sequence per million sample reads. Technically it is the *median* of the per-marker RPKM values across all markers that belong to the family. |
+| **Hits** | **Raw read count** – the number of reads mapped to the family's markers (not normalized). |
+| **TotMarkerLength** | Summed length (in amino acids) of the family's markers. |
+| **RealCount** | Equal to **Hits** when **Count > 0**, and `0` otherwise – i.e. the raw read count *after* ShortBRED's detection threshold has been applied (see below). |
+
+**Detection threshold.** `Count` is a *median* over the family's markers, which is what makes ShortBRED's abundance estimate robust: for `Count` to be non-zero, more than ~50 % of a cluster's markers must be matched by reads from the sample. When fewer than half of the markers are hit, the family's abundance is deemed unreliable and set to `0`. `RealCount` mirrors this filter on the raw counts (`Hits` are kept only where `Count > 0`), so that the discrete, non-normalized counts remain available for downstream statistical analyses and custom normalization.
+
+> In short: **`Count` = normalized RPKM abundance**, **`Hits` / `RealCount` = raw (threshold-filtered) read counts.** Use whichever value best fits your downstream analysis.
+
 ## Secondary analysis
 After the primary analysis has finished successfully to yield the annotated flagellin relative abundance tables, you can add your sample metadata and do exploratory analysis using the secondary analysis code. It is provided in the form of R Jupyter notebooks (.ipynb files).
 
