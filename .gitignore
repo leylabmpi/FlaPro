@@ -1,6 +1,7 @@
 .snakemake/
 tmp/
 out/
+output/
 *.log
 screenlog.*
 flapro.err
