@@ -200,11 +200,14 @@ Each per-sample table has one row per flagellin family (marker cluster) with the
 ## Secondary analysis
 After the primary analysis has finished successfully to yield the annotated flagellin relative abundance tables, you can add your sample metadata and do exploratory analysis using the secondary analysis code. It is provided in the form of R Jupyter notebooks (.ipynb files).
 
+## Setup Environment
+
+### Option A: Conda 
 To set up the environment for the secondary analysis, you will need:
 - Conda (https://docs.conda.io/en/latest/)
 - Visual Studio Code (or an alternative integrated development enviroment supporting running R notebooks via a defined Conda environment)
 
-Create a specific Conda environment using the YAML file provided in the envs/ folder:
+Create a specific Conda environment using the YAML file provided in the `envs/` folder:
 ```bash
 conda env create -f r_433_nb.yaml
 conda activate r_433_nb
@@ -218,9 +221,19 @@ devtools::install_github("malucalle/selbal")
 devtools::install_bitbucket("knomics/nearestbalance")
 devtools::install_github("leylabmpi/LeyLabRMisc")
 ```
-(these instructions can be also run using the provided envs/...postBuild.sh script) 
+(these instructions can be also run using the provided `envs/...postBuild.sh` script) 
 
 Open the notebook in VS Code, select the R Jupyter kernel of the installed environment and run the notebook.
 Further information on how to generate your own notebooks easily synchronizable across multiple projects is provided in a [separate readme file](/notebooks/differential_analysis/notebook_generator/README.md).
+
+### Option B: Native R
+
+In `envs/` folder:
+
+```
+Rscript r_433_nb_install_deps.R
+```
+or manually according to the list of the dependencies
+
 
 Note: while the main input files for the secondary analysis are generated during the primary analysis, you have to prepare the additional files with the number of reads per sample (sample coverage), for example, using the `scripts/count_reads.sh` script.
