@@ -2,6 +2,11 @@
 
 A workflow for quantifying bacterial flagellins in human gut microbiome sequencing data, annotating their human TLR5 interaction phenotypes and conducting statistical analysis and visualization.
 
+**Citation**  
+If you use FlaPro in your research, please cite:
+
+> Bogdanova AA, Borbón-García A, Ley RE, Tyakht AV. Human gut flagellome profiling using FlaPro reveals TLR5-related phenotype-specific alterations in IBD. *Gut Microbes*. 2026;18(1):2698917. doi: [10.1080/19490976.2026.2698917](https://doi.org/10.1080/19490976.2026.2698917)
+
 ## Installation
 ``````
 git clone https://github.com/leylabmpi/FlaPro.git
