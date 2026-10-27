@@ -52,8 +52,10 @@ def get_reads_input(wildcards):
     """Returns a list of valid input FASTA files, ensuring correct single-end and paired-end behavior."""
     reads1 = config['tmp_dir'] + f"{wildcards.sample}_reads1.fasta"
     reads2 = config['tmp_dir'] + f"{wildcards.sample}_reads2.fasta"
-    # Check if Read2 exists and is not empty
-    if os.path.exists(reads2) and os.stat(reads2).st_size > 0:
+    # Decide from the samples table, not from reads2.fasta on disk: this runs while
+    # the DAG is built, before shortbred_fastq2fasta has written reads2.fasta, so an
+    # existence check always returned [reads1] and PE samples ran on R1 only.
+    if get_fastq_input(wildcards, 'Read2'):
         return [reads1, reads2]  # Return both files for paired-end
     return [reads1]  # Always return a list, even for single-end reads
 
@@ -78,7 +80,9 @@ rule shortbred_quantify:
     threads: 
         8
     resources:
-        time = lambda wildcards, attempt: attempt ** 2 * 59,
+        # x2 since R2 is quantified too: R1-only runs took up to ~65-90 min
+        # (PRJEB62473 MGX p99/max), close to the old 59 min attempt-1 limit
+        time = lambda wildcards, attempt: attempt ** 2 * 118,
         n = lambda wildcards, threads: threads,
         mem_gb_pt = lambda wildcards, attempt: attempt ** 3 * 4 + 12
     shell:
